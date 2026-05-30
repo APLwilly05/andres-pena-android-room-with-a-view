@@ -50,4 +50,7 @@ public interface WordDao {
 
     @Query("DELETE FROM word_table")
     void deleteAll();
+
+    @Query("DELETE FROM word_table WHERE word = :word")
+    void deleteWord(String word);
 }

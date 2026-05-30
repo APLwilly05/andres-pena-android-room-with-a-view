@@ -29,32 +29,51 @@ import java.util.List;
 
 public class WordListAdapter extends RecyclerView.Adapter<WordListAdapter.WordViewHolder> {
 
+    private final OnItemClickListener mListener;
     class WordViewHolder extends RecyclerView.ViewHolder {
         private final TextView wordItemView;
 
-        private WordViewHolder(View itemView) {
+        private WordViewHolder(View itemView, OnItemClickListener listener) {
             super(itemView);
             wordItemView = itemView.findViewById(R.id.textView);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (listener != null) {
+                        int position = getAdapterPosition();
+                        // Verify the clicked position is still valid in the adapter list
+                        if (position != RecyclerView.NO_POSITION) {
+                            listener.onItemClick(position);
+                        }
+                    }
+                }
+            });
         }
     }
 
     private final LayoutInflater mInflater;
     private List<Word> mWords = Collections.emptyList(); // Cached copy of words
 
-    WordListAdapter(Context context) {
+    WordListAdapter(Context context, OnItemClickListener listener) {
         mInflater = LayoutInflater.from(context);
+        mListener = listener;
     }
 
     @Override
     public WordViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = mInflater.inflate(R.layout.recyclerview_item, parent, false);
-        return new WordViewHolder(itemView);
+        return new WordViewHolder(itemView, mListener);
     }
 
     @Override
     public void onBindViewHolder(WordViewHolder holder, int position) {
         Word current = mWords.get(position);
         holder.wordItemView.setText(current.getWord());
+    }
+
+    public List<Word> getWordList(){
+        return mWords;
     }
 
     void setWords(List<Word> words) {
