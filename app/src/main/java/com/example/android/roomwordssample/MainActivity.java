@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
     public static final int NEW_WORD_ACTIVITY_REQUEST_CODE = 1;
 
     private WordViewModel mWordViewModel;
-
+    WordListAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,10 +48,10 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         RecyclerView recyclerView = findViewById(R.id.recyclerview);
-        final WordListAdapter adapter = new WordListAdapter(this, new OnItemClickListener() {
+        adapter = new WordListAdapter(this, new OnItemClickListener() {
             @Override
-            public void onItemClick(int position) {
-                Toast.makeText(MainActivity.this, "Eliminado", Toast.LENGTH_SHORT).show();
+            public void onItemClick(int position) { //elimina la palabra de un solo click
+                Toast.makeText(MainActivity.this, deleteWord(position), Toast.LENGTH_SHORT).show();
             }
         });
         recyclerView.setAdapter(adapter);
@@ -79,6 +79,13 @@ public class MainActivity extends AppCompatActivity {
                 startActivityForResult(intent, NEW_WORD_ACTIVITY_REQUEST_CODE);
             }
         });
+    }
+
+    private String deleteWord(int position){
+        List<Word> words = adapter.getWordList();
+        String word = words.get(position).getWord();
+        mWordViewModel.deleteWord(word);
+        return word+" Eliminado";
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
